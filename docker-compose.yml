@@ -1,0 +1,18 @@
+version: '3'
+services:
+  static-server:
+    container_name: static
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - TZ=Asia/Seoul
+
+networks:
+  default:
+    external: true
+    name: main_default

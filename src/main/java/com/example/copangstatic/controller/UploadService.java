@@ -26,6 +26,7 @@ public class UploadService {
 
     public List<ImageResource> uploadFiles(List<UploadForm> files, Long itemId) {
 
+        System.out.println("files == null = " + (files == null));
         List<ImageResource> resources = new ArrayList<>(files.size());
 
         for (UploadForm f : files) {
