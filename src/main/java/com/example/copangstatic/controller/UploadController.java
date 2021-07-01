@@ -33,15 +33,14 @@ public class UploadController {
 //        return key;
 //    }
 
-    @PostMapping("/upload")
+    @PostMapping("/upload/image")
     public String upload(@RequestParam("file") MultipartFile file) throws IOException {
         return uploader.upload(file, "static");
     }
 
-    @PostMapping("/upload/{itemId}")
-    public ResponseMessage<ImageResource> upload(@ModelAttribute UploadForm form,
-        @PathVariable(value = "itemId") Long itemId) throws IOException {
-        ImageResource resource = service.uploadFile(form, itemId);
+    @PostMapping("/upload")
+    public ResponseMessage<ImageResource> upload(@ModelAttribute UploadForm form) throws IOException {
+        ImageResource resource = service.uploadFile(form);
 
         return ResponseMessage.of(
             resource
@@ -51,7 +50,7 @@ public class UploadController {
     @PostMapping("/upload/list/{itemId}")
     public ResponseMessage<List<ImageResource>> uploadImage(@ModelAttribute UploadListForm forms,
         @PathVariable(value = "itemId") Long itemId) {
-        List<ImageResource> res = service.uploadFiles(forms.getImageList(), itemId);
+        List<ImageResource> res = service.uploadFiles(forms.getImageList());
         return ResponseMessage.of(res);
     }
 

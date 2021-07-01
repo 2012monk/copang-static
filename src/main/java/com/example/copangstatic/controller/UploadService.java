@@ -24,22 +24,21 @@ public class UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public List<ImageResource> uploadFiles(List<UploadForm> files, Long itemId) {
+    private final String PRE_FIX = "image";
+    public List<ImageResource> uploadFiles(List<UploadForm> files) {
 
         System.out.println("files == null = " + (files == null));
         List<ImageResource> resources = new ArrayList<>(files.size());
 
         for (UploadForm f : files) {
             try {
-                ImageResource r = uploadAndGet(f.getImage(), f.getDetailId(), itemId);
+                ImageResource r = uploadAndGet(f.getImage(), PRE_FIX);
                 repository.save(r);
                 resources.add(r);
             } catch (Exception e) {
                 resources.add(
                     ImageResource.builder()
                         .message("failed")
-                        .itemId(itemId)
-                        .itemDetailId(f.getDetailId())
                         .build()
                 );
                 e.printStackTrace();
@@ -48,34 +47,25 @@ public class UploadService {
         return resources;
     }
 
-    private ImageResource uploadAndGet(MultipartFile file, Long detailId, Long itemId)
+    private ImageResource uploadAndGet(MultipartFile file, String dir)
         throws IOException {
         String fileName = file.getOriginalFilename();
         String serveName = UUID.randomUUID().toString();
 
-        String dirName = makePath(itemId, detailId, serveName);
-
-        String uploadedUrl = uploader.upload(file, dirName);
+        String uploadedUrl = uploader.upload(file, dir);
 
         return ImageResource.builder()
-            .itemDetailId(detailId)
-            .itemId(itemId)
             .originalFileName(fileName)
-            .uri(dirName)
+            .uri(dir + "/" + serveName)
             .accessPoint(bucket)
-            .publicPath("https://" + bucket + "/" + dirName)
+            .publicPath("https://" + bucket + "/" + dir + "/" + serveName)
             .uploadedUrl(uploadedUrl)
             .savedName(serveName)
             .build();
     }
 
-    private String makePath(Long itemId, Long detailId, String fileName) {
-        StringJoiner joiner = new StringJoiner("/");
-
-        joiner.add(itemId.toString());
-        joiner.add(detailId.toString());
-        joiner.add(fileName);
-        return joiner.toString();
+    private String makePath(String ...fileNames) {
+        return String.join("/", fileNames);
     }
 
     private String makePath(Long detailId, Long itemId, Long sellerId) {
@@ -87,12 +77,11 @@ public class UploadService {
         return joiner.toString();
     }
 
-    public ImageResource uploadFile(UploadForm form, Long itemId) throws IOException {
+    public ImageResource uploadFile(UploadForm form) throws IOException {
 
         MultipartFile file = form.getImage();
-        Long detailId = form.getDetailId();
 
-        ImageResource resource = uploadAndGet(file, detailId, itemId);
+        ImageResource resource = uploadAndGet(file, PRE_FIX);
 
         repository.save(resource);
         return resource;

@@ -24,10 +24,6 @@ public class ImageResource {
     @Id @GeneratedValue
     private Long id;
 
-    private Long itemId;
-
-    private Long itemDetailId;
-
     private String message;
 
     private Long uploaderId;
