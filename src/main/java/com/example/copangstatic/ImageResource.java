@@ -42,7 +42,7 @@ public class ImageResource {
 
     private String publicPath;
 
-    @JsonIgnore
+//    @JsonIgnore
     private String uploadedUrl;
 
 }

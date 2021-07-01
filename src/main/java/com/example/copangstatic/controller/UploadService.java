@@ -52,7 +52,8 @@ public class UploadService {
         String fileName = file.getOriginalFilename();
         String serveName = UUID.randomUUID().toString();
 
-        String uploadedUrl = uploader.upload(file, dir);
+        String path = dir + "/" + serveName;
+        String uploadedUrl = uploader.upload(file, path);
 
         return ImageResource.builder()
             .originalFileName(fileName)
