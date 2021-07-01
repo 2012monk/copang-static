@@ -47,9 +47,8 @@ public class UploadController {
         );
     }
 
-    @PostMapping("/upload/list/{itemId}")
-    public ResponseMessage<List<ImageResource>> uploadImage(@ModelAttribute UploadListForm forms,
-        @PathVariable(value = "itemId") Long itemId) {
+    @PostMapping("/upload/list}")
+    public ResponseMessage<List<ImageResource>> uploadImage(@ModelAttribute UploadListForm forms) {
         List<ImageResource> res = service.uploadFiles(forms.getImageList());
         return ResponseMessage.of(res);
     }
